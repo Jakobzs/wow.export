@@ -52,7 +52,7 @@ class CASC {
 
 			for (const rootTypeIdx of entry.keys()) {
 				const rootType = this.rootTypes[rootTypeIdx];
-				if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 1)) {
+				if ((rootType.localeFlags & this.locale)) {
 					include = true;
 					break;
 				}
@@ -93,7 +93,7 @@ class CASC {
 			const rootType = this.rootTypes[rootTypeIdx];
 
 			// Select the first root entry that has a matching locale and no LowViolence flag set.
-			if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 1)) {
+			if ((rootType.localeFlags & this.locale)) {
 				contentKey = key;
 				break;
 			}
