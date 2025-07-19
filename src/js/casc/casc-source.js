@@ -52,7 +52,7 @@ class CASC {
 
 			for (const rootTypeIdx of entry.keys()) {
 				const rootType = this.rootTypes[rootTypeIdx];
-				if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 0)) {
+				if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 1)) {
 					include = true;
 					break;
 				}
@@ -75,7 +75,7 @@ class CASC {
 
 		const raw = this.isRemote ? await this.getDataFile(this.formatCDNKey(installKey)) : await this.getDataFileWithRemoteFallback(installKey);
 		const manifest = new BLTEReader(raw, installKey);
-		
+
 		return new InstallManifest(manifest);
 	}
 
@@ -93,7 +93,7 @@ class CASC {
 			const rootType = this.rootTypes[rootTypeIdx];
 
 			// Select the first root entry that has a matching locale and no LowViolence flag set.
-			if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 0)) {
+			if ((rootType.localeFlags & this.locale) && ((rootType.contentFlags & ContentFlag.LowViolence) === 1)) {
 				contentKey = key;
 				break;
 			}
@@ -140,7 +140,7 @@ class CASC {
 		// If filename is "unknown/<fdid>", skip listfile lookup
 		if (fileName.startsWith("unknown/") && !fileName.includes('.'))
 			fileDataID = parseInt(fileName.split('/')[1]);
-		else 
+		else
 			fileDataID = listfile.getByFilename(fileName);
 
 		if (fileDataID === undefined)
@@ -172,7 +172,7 @@ class CASC {
 
 		if (core.view.config.modelsShowM2)
 			modelExt.push('.m2');
-		
+
 		if (core.view.config.modelsShowWMO)
 			modelExt.push(['.wmo', constants.LISTFILE_MODEL_FILTER]);
 
@@ -282,14 +282,12 @@ class CASC {
 			let totalFileCount;
 			let namedFileCount;
 
-			if (version == 0)
-			{
+			if (version == 0) {
 				totalFileCount = headerSize;
 				namedFileCount = version;
 				headerSize = 12;
 			}
-			else
-			{
+			else {
 				totalFileCount = root.readUInt32LE();
 				namedFileCount = root.readUInt32LE();
 			}
@@ -297,10 +295,10 @@ class CASC {
 			root.seek(headerSize);
 
 			const allowNamelessFiles = totalFileCount !== namedFileCount;
-		
+
 			while (root.remainingBytes > 0) {
 				const numRecords = root.readUInt32LE();
-				
+
 				let contentFlags;
 				let localeFlags;
 
@@ -318,7 +316,7 @@ class CASC {
 				const fileDataIDs = new Array(numRecords);
 
 				let fileDataID = 0;
-				for (let i = 0; i < numRecords; i++)  {
+				for (let i = 0; i < numRecords; i++) {
 					const nextID = fileDataID + root.readInt32LE();
 					fileDataIDs[i] = nextID;
 					fileDataID = nextID + 1;
@@ -356,7 +354,7 @@ class CASC {
 				const fileDataIDs = new Array(numRecords);
 
 				let fileDataID = 0;
-				for (let i = 0; i < numRecords; i++)  {
+				for (let i = 0; i < numRecords; i++) {
 					const nextID = fileDataID + root.readInt32LE();
 					fileDataIDs[i] = nextID;
 					fileDataID = nextID + 1;
@@ -386,7 +384,7 @@ class CASC {
 
 		return rootEntries.size;
 	}
-	
+
 	/**
 	 * Parse entries from an encoding file.
 	 * @param {BufferWrapper} data 
